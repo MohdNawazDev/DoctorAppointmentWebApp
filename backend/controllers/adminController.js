@@ -116,27 +116,36 @@ const addDoctor = async (req, res) => {
 
 
 
-// // API FOR ADMIN LOGIN 
+// // API FOR ADMIN LOGIN
 const loginAdmin = async(req, res) => {
     try {
         // first we will get the email id and pass from req and we wil match that email and password with this env variables
-        //it that matching we will create a token using jsonWebToken 
+        //it that matching we will create a token using jsonWebToken
         const {email, password} = req.body;
-        
-       
-        if(email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD){
-            const token = jwt.sign(email+password, process.env.JWT_SECRET)
+
+        // Trim whitespace from environment variables to handle any formatting issues
+        const adminEmail = process.env.ADMIN_EMAIL?.trim();
+        const adminPassword = process.env.ADMIN_PASSWORD?.trim();
+
+        console.log('Login attempt:', { email, passwordProvided: !!password });
+        console.log('Env vars set:', { adminEmail: !!adminEmail, adminPassword: !!adminPassword });
+
+        if(email === adminEmail && password === adminPassword){
+            const token = jwt.sign({email:email, role: 'admin'}, process.env.JWT_SECRET)
             res.json({success: true, token})
 
         }else{
-            //if not matching 
+            //if not matching
+            console.log('Credentials do not match');
+            console.log('Expected email:', adminEmail, 'Got:', email);
+            console.log('Password match:', password === adminPassword);
             res.json({success: false, message: "Invalid Credentials"})
         }
 
     } catch (error) {
         console.log(error);
         res.json({success: false, message:error.message})
-        
+
     }
 }
 

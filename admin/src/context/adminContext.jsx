@@ -10,13 +10,13 @@ const AdminContextProvider = (props) => {
     const [appointments, setAppointments] = useState([])
     const [dashData, setDashData] = useState(false)
 
-    const backEndUrl = "https://doctorappointmentwebapp-backend.onrender.com"
+    const backEndUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000"
     // console.log("Backendurl", backEndUrl);
 
     const getAllDoctors = async(req, res) => {
          
             try {
-                const {data} = await axios.post(backEndUrl + '/api/admin/all-doctors', {}, {headers: {aToken}});
+                const {data} = await axios.post(backEndUrl + '/api/admin/all-doctors', {}, {headers: {atoken: aToken}});
 
             if(data.success){
                 setDoctors(data.doctors);
@@ -95,7 +95,7 @@ const cancelAppointment = async(appointmentId) => {
     const getDashData = async() => {
         try {
             
-            const {data} = await axios.get(backEndUrl + '/api/admin/dashboard', {headers:{aToken}})
+            const {data} = await axios.get(backEndUrl + '/api/admin/dashboard', {headers:{atoken: aToken}})
             if(data.success){
                 setDashData(data.dashData)
                 console.log(data.dashData);
